@@ -1,20 +1,22 @@
 package main
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
-	client := http.Client{}
-	request, err := http.NewRequest("GET", "https://httpbin.org/get", nil)
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	request, err := http.NewRequestWithContext(ctx, "GET", "https://httpbin.org/delay/0.1", nil)
 	if err != nil {
 		panic(err)
 	}
-	request.Header.Set("Accept", "application/json")
-	request.Header.Set("AnotherHeader", "Random Value")
-	response, err := client.Do(request)
+	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		panic(err)
 	}
