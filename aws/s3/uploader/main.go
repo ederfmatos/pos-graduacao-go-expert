@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 	"log"
 	"os"
+	"pos-graduacao-go-lang/aws/session"
 	"sync"
 	"time"
 )
@@ -20,17 +19,7 @@ var (
 )
 
 func init() {
-	config := &aws.Config{
-		Region:           aws.String("us-east-1"),
-		Credentials:      credentials.NewStaticCredentials("test", "test", ""),
-		Endpoint:         aws.String("http://localhost:4566"),
-		S3ForcePathStyle: aws.Bool(true),
-	}
-	awsSession, err := session.NewSession(config)
-	if err != nil {
-		panic(err)
-	}
-	s3Client = s3.New(awsSession)
+	s3Client = s3.New(session.AwsSession)
 	waitGroup = &sync.WaitGroup{}
 }
 
@@ -66,7 +55,7 @@ func uploadFile(fileName string, uploadControl <-chan struct{}, errorControl cha
 		waitGroup.Done()
 		<-uploadControl
 	}()
-	completedFileName := fmt.Sprintf("s3/tmp/%s", fileName)
+	completedFileName := fmt.Sprintf("aws/s3/tmp/%s", fileName)
 	fmt.Printf("Uploading file %s\n", completedFileName)
 	file, err := os.Open(completedFileName)
 	if err != nil {

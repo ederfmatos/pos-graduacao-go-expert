@@ -2,10 +2,9 @@ package main
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"log/slog"
+	"pos-graduacao-go-lang/aws/session"
 	"sync"
 )
 
@@ -15,17 +14,7 @@ var (
 )
 
 func init() {
-	config := &aws.Config{
-		Region:           aws.String("us-east-1"),
-		Credentials:      credentials.NewStaticCredentials("test", "test", ""),
-		Endpoint:         aws.String("http://localhost:4566"),
-		S3ForcePathStyle: aws.Bool(true),
-	}
-	awsSession, err := session.NewSession(config)
-	if err != nil {
-		panic(err)
-	}
-	sqsClient = sqs.New(awsSession)
+	sqsClient = sqs.New(session.AwsSession)
 	waitGroup = &sync.WaitGroup{}
 }
 

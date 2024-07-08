@@ -2,10 +2,9 @@ package main
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
 	"log/slog"
+	"pos-graduacao-go-lang/aws/session"
 )
 
 var (
@@ -13,17 +12,7 @@ var (
 )
 
 func init() {
-	config := &aws.Config{
-		Region:           aws.String("us-east-1"),
-		Credentials:      credentials.NewStaticCredentials("test", "test", ""),
-		Endpoint:         aws.String("http://localhost:4566"),
-		S3ForcePathStyle: aws.Bool(true),
-	}
-	awsSession, err := session.NewSession(config)
-	if err != nil {
-		panic(err)
-	}
-	sesClient = ses.New(awsSession)
+	sesClient = ses.New(session.AwsSession)
 }
 
 func main() {
