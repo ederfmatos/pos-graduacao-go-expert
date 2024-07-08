@@ -40,13 +40,8 @@ func getItem(product *Product) {
 	})
 	handleError(err)
 	item, err := dynamoDBClient.GetItem(&dynamodb.GetItemInput{
-		AttributesToGet:          nil,
-		ConsistentRead:           nil,
-		ExpressionAttributeNames: nil,
-		Key:                      key,
-		ProjectionExpression:     nil,
-		ReturnConsumedCapacity:   nil,
-		TableName:                aws.String(tableName),
+		Key:       key,
+		TableName: aws.String(tableName),
 	})
 	handleError(err)
 	fmt.Println(item)
