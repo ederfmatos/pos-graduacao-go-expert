@@ -6,7 +6,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3,sqs
+      - SERVICES=s3,sqs,secretsmanager
       - HOSTNAME=localstack
       - HOSTNAME_EXTERNAL=localstack
       - DEFAULT_REGION=us-east-1
@@ -24,4 +24,24 @@ services:
       "
         aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket go-expert-bucket-example --region us-east-1
         aws --endpoint-url=http://localstack:4566 s3api list-buckets
+      "
+
+  aws-cli-secrets-manager:
+    image: amazon/aws-cli
+    depends_on:
+      - localstack
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: /bin/sh -c
+    command: >
+      "
+        touch secrets.json
+        echo '{ "username": "admin", "password": "password" }' > secrets.json
+      
+        aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name test-secret --description "LocalStack Secret" --secret-string file://aws/secrets.json
+        aws --endpoint-url=http://localstack:4566 secretsmanager describe-secret --secret-id test-secret
+        aws --endpoint-url=http://localstack:4566 secretsmanager list-secrets
+        aws --endpoint-url=http://localstack:4566 secretsmanager get-secret-value --secret-id test-secret
       "
