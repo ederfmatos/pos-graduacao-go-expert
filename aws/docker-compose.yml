@@ -6,7 +6,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3:4566
+      - SERVICES=s3,sqs
       - HOSTNAME=localstack
       - HOSTNAME_EXTERNAL=localstack
       - DEFAULT_REGION=us-east-1

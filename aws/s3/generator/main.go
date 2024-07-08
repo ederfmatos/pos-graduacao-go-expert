@@ -7,7 +7,7 @@ import (
 
 func main() {
 	for i := range 9999 {
-		file, err := os.Create(fmt.Sprintf("aws-s3/tmp/%d.txt", i))
+		file, err := os.Create(fmt.Sprintf("aws/s3/tmp/%d.txt", i))
 		if err != nil {
 			panic(err)
 		}

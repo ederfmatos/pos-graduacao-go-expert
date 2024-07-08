@@ -35,7 +35,7 @@ func init() {
 }
 
 func main() {
-	directory, err := os.Open("aws-s3/tmp")
+	directory, err := os.Open("aws/s3/tmp")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func uploadFile(fileName string, uploadControl <-chan struct{}, errorControl cha
 		waitGroup.Done()
 		<-uploadControl
 	}()
-	completedFileName := fmt.Sprintf("aws-s3/tmp/%s", fileName)
+	completedFileName := fmt.Sprintf("s3/tmp/%s", fileName)
 	fmt.Printf("Uploading file %s\n", completedFileName)
 	file, err := os.Open(completedFileName)
 	if err != nil {
