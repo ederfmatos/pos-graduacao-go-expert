@@ -6,7 +6,7 @@ services:
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=s3,sqs,secretsmanager
+      - SERVICES=s3,sqs,secretsmanager,ses
       - HOSTNAME=localstack
       - HOSTNAME_EXTERNAL=localstack
       - DEFAULT_REGION=us-east-1
@@ -39,9 +39,28 @@ services:
       "
         touch secrets.json
         echo '{ "username": "admin", "password": "password" }' > secrets.json
+        alias awslocal='aws --endpoint-url=http://localstack:4566'
       
-        aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name test-secret --description "LocalStack Secret" --secret-string file://aws/secrets.json
-        aws --endpoint-url=http://localstack:4566 secretsmanager describe-secret --secret-id test-secret
-        aws --endpoint-url=http://localstack:4566 secretsmanager list-secrets
-        aws --endpoint-url=http://localstack:4566 secretsmanager get-secret-value --secret-id test-secret
+        awslocal secretsmanager create-secret --name test-secret --description "LocalStack Secret" --secret-string file://aws/secrets.json
+        awslocal secretsmanager describe-secret --secret-id test-secret
+        awslocal secretsmanager list-secrets
+        awslocal secretsmanager get-secret-value --secret-id test-secret
+      "
+
+  aws-cli-ses:
+    image: amazon/aws-cli
+    depends_on:
+      - localstack
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: /bin/sh -c
+    command: >
+      "
+        alias awslocal='aws --endpoint-url=http://localstack:4566'
+        awslocal ses verify-email-identity --email hello@example.com
+        awslocal ses list-identities
+        
+        awslocal ses send-email--from "hello@example.com"  --message 'Body={Text={Data="This is the email body"}},Subject={Data="This is the email subject"}'  --destination 'ToAddresses=jeff@aws.com'
       "
