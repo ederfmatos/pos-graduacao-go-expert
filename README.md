@@ -14,3 +14,18 @@
 ```bash
  go test -fuzz=. -fuzztime=5s
 ```
+
+# SqlC
+****
+```bash
+ migrate create -ext=sql -dir=sql/migrations -seq init
+```
+**Run migrations**
+```bash
+ migrate -path=sql/migrations -database "mysql://root:root@tcp(localhost:3306)/goexpert" -verbose up
+```
+
+**Down migrations**
+```bash
+ migrate -path=sql/migrations -database "mysql://root:root@tcp(localhost:3306)/goexpert" -verbose down
+```
